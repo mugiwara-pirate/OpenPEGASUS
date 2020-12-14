@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
-#if GEMINI_USE_GMP
+#ifdef PEGASUS_USE_GMP
 #include <gmpxx.h>
+#else
+#warn "not PEGASUS_USE_GMP"
 #endif
 #include <array>
 #include <iosfwd>
@@ -166,7 +168,7 @@ class RunTime {
   /// Ciphertext assignment according to
   Status Assign(Ctx* out, seal::parms_id_type pid, Ctx const& in) const;
 
-#if GEMINI_USE_GMP
+#ifdef PEGASUS_USE_GMP
   /**
    * Convert the coeffients of plaintext to BigNumber presentation.
    * @param negative If true, the coeffients are given in [-p/2, p/2) range.

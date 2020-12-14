@@ -52,8 +52,8 @@ std::vector<uint32_t> GaloisKeysForFasterRotation(
   return galois_elts;
 }
 
-#if GEMINI_USE_GMP
-#define GEMINI_ENABLE_CONVENTIONAL_FORM 1
+#ifdef PEGASUS_USE_GMP
+#define ENABLE_CONVENTIONAL_FORM 1
 #include "pegasus/contrib/safe_ptr.h"
 
 struct ConventionalFormPrecomp {
@@ -100,7 +100,7 @@ struct ConventionalFormPrecomp {
   ~ConventionalFormPrecomp() {}
 };
 #else
-#define GEMINI_ENABLE_CONVENTIONAL_FORM 0
+#define PEGASUS_ENABLE_CONVENTIONAL_FORM 0
 #endif
 
 bool GetHeader(RunTime::CtxHeader* header, Ctx const& ct) {
@@ -1907,7 +1907,7 @@ struct RunTime::Impl {
   }
 
   ~Impl() {
-#if GEMINI_ENABLE_CONVENTIONAL_FORM
+#if ENABLE_CONVENTIONAL_FORM
     for (auto kv : convFormPrecomp_) {
       if (kv.second) delete kv.second;
       kv.second = nullptr;
@@ -1944,7 +1944,7 @@ struct RunTime::Impl {
   std::unique_ptr<seal::CKKSEncoder> s_encoder_{nullptr};
   std::unique_ptr<FastCKKSEncoder> f_encoder_{nullptr};
 
-#if GEMINI_ENABLE_CONVENTIONAL_FORM
+#if ENABLE_CONVENTIONAL_FORM
   Status ConventionalForm(Ptx const& pt, std::vector<F64>* out, bool neg,
                           size_t gap = 1) {
     CHECK_BOOL(out == nullptr,
@@ -2089,7 +2089,7 @@ struct RunTime::Impl {
 
   sf::contention_free_shared_mutex<> precompGuard_;
   std::unordered_map<size_t, ConventionalFormPrecomp*> convFormPrecomp_;
-#endif  // GEMINI_ENABLE_CONVENTIONAL_FORM
+#endif
 
   U64 GetModulusPrime(size_t cm) const {
     auto pid = context_->first_parms_id();
@@ -2382,7 +2382,7 @@ Status RunTime::Assign(Ctx* out, seal::parms_id_type pid, Ctx const& in) const {
   return impl_->Assign(out, pid, in);
 }
 
-#if GEMINI_ENABLE_CONVENTIONAL_FORM
+#if ENABLE_CONVENTIONAL_FORM
 Status RunTime::ConventionalForm(Ptx const& pt, std::vector<mpz_class>* coeff,
                                  bool neg) {
   return impl_->ConventionalForm(pt, coeff, neg);
@@ -2392,7 +2392,7 @@ Status RunTime::ConventionalForm(Ptx const& pt, std::vector<F64>* coeff,
                                  bool neg) {
   return impl_->ConventionalForm(pt, coeff, neg);
 }
-#endif  // GEMINI_ENABLE_CONVENTIONAL_FORM
+#endif
 
 U64 RunTime::GetModulusPrime(size_t cm) const {
   return impl_->GetModulusPrime(cm);

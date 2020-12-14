@@ -12,8 +12,8 @@ add_compile_options(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_subdirectory(thirdparty/Gemini-SEAL/)
-include_directories(thirdparty/Gemini-SEAL/native/src/)
+add_subdirectory(thirdparty/SEAL/)
+include_directories(thirdparty/SEAL/native/src/)
 include_directories(thirdparty/rapidjson/include)
 include_directories(thirdparty/)
 
@@ -49,9 +49,9 @@ if (PEGASUS_USE_EIGEN)
   include_directories(${EIGEN_INCLUDE_DIR})
 endif()
 
-find_package(GMP)
+find_package(GMP REQUIRED)
 if(GMP_FOUND)
-add_definitions(-DGEMINI_USE_GMP)
+add_definitions(-DPEGASUS_USE_GMP)
 include_directories(${GMP_INCLUDES} /usr/local/include)
 endif(GMP_FOUND)
 
